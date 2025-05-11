@@ -1,0 +1,21 @@
+server:
+  port: 9091
+spring:
+  application:
+    name: demo
+  config:
+    import: nacos:demo.yml
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.19.46.246:8848
+        username: nacos
+        password: 528492
+        enabled: true
+      config:
+        server-addr: 172.19.46.246:8848
+        cluster-name: DEFAULT_GROUP
+        username: nacos
+        password: 528492
+        file-extension: yml
+        enabled: true
