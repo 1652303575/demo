@@ -28,7 +28,7 @@ public class UserController {
      * 根据ID获取用户信息
      *
      * @param id 用户ID
-     * @return 用户信息
+     * @return 用户信息1
      */
     @GetMapping("/{id}")
     public Result<User> getById(@PathVariable Long id) {
