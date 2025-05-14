@@ -1,0 +1,86 @@
+DROP TABLE IF EXISTS pm.pm_5gc_upf_zy_t;
+DROP SEQUENCE IF EXISTS pm.pm_5gc_upf_zy_t_id_seq;
+CREATE SEQUENCE pm.pm_5gc_upf_zy_t_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+		
+-- 创建主表（分区表）
+CREATE TABLE pm.pm_5gc_upf_zy_t (
+    id INT DEFAULT nextval('pm.pm_5gc_upf_zy_t_id_seq'), 
+		ne_name VARCHAR(255) NOT NULL, 
+    begin_time VARCHAR(50) NOT NULL,   
+    end_time VARCHAR(50) NOT NULL, 		 
+		g501510006 numeric(10, 2),		
+		g501509001 numeric(10, 2),
+		g501509002 numeric(10, 2),
+		g501510004 numeric(10, 2),
+		g501510001 numeric(10, 2),
+		g501510022 numeric(10, 2),
+		g501501064 numeric(10, 2),
+		g501501014 numeric(10, 2),		
+		g501502096 numeric(10, 2),	
+		g501502006 numeric(10, 2),	
+		g501506064 numeric(10, 2),	
+		g501506014 numeric(10, 2),	
+		g501507096 numeric(10, 2),	
+		g501507006 numeric(10, 2),			
+		g501503064 numeric(10, 2),
+		g501503014 numeric(10, 2),							 
+    collect_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id, collect_time)  -- ✅ 主键包含分区键
+) PARTITION BY RANGE (collect_time);
+COMMENT ON TABLE pm.pm_5gc_upf_zy_t IS '自研UPF性能表';
+-- 添加字段注释
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.id IS '主键';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.ne_name IS '网元名称';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.begin_time IS '开始时间';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.end_time IS '结束时间';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501510006 IS '会话峰值使用率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501509001 IS '用户平面最大的会话数目';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501509002 IS '用户平面平均会话数目';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501510004 IS '内存使用率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501510001 IS 'cpu使用率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501510022 IS '整机速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501501064 IS 'N3接口报文接收千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501501014 IS 'N3接口接收的GTP报文峰值千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501502096 IS 'N6接口报文接收千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501502006 IS 'N6接口接收的报文峰值千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501506064 IS 'S5S8接口报文接收千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501506014 IS 'S5/S8接口接收的GTP报文峰值千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501507096 IS 'SGI接口报文接收千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501507006 IS 'SGI接口接收的报文峰值千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501503064 IS 'N9接口报文接收千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.g501503014 IS 'N9接口接收的GTP报文峰值千字节速率';
+COMMENT ON COLUMN pm.pm_5gc_upf_zy_t.collect_time IS '采集时间';
+
+-- ✅ 生成从 2025-04 到 2035-12 的分区表
+DO $$ 
+DECLARE 
+    year_month DATE;
+    part_name TEXT;
+BEGIN
+    FOR year_month IN (
+        SELECT generate_series('2025-04-01'::DATE, '2035-12-01'::DATE, '1 month'::INTERVAL)::DATE
+    )
+    LOOP
+        part_name := 'pm_5gc_upf_zy_t_' || to_char(year_month, 'YYYY_MM');
+
+        EXECUTE format(
+            'CREATE TABLE pm.%I PARTITION OF pm.pm_5gc_upf_zy_t
+             FOR VALUES FROM (%L) TO (%L);',
+            part_name,
+            year_month,
+            year_month + INTERVAL '1 month'
+        );
+
+        EXECUTE format(
+            'CREATE UNIQUE INDEX %I_ne_bt_ct_uidx ON pm.%I (ne_name, begin_time);',
+            part_name,
+            part_name
+        );
+    END LOOP;
+END $$;
+
