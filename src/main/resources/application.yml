@@ -26,12 +26,35 @@ spring:
     username: root
     password: 528492
     driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 172.29.206.129
+      port: 6379
+      password: 528492 # 如果有密码，请在这里填写
+      database: 0
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+  cache:
+    type: redis
+    redis:
+      time-to-live: 3600000  # 缓存过期时间，单位毫秒
+      cache-null-values: false  # 是否缓存空值
 mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
   type-aliases-package: com.shiqi.demo.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 logging:
+  level:
+    root: info
+    com.shiqi.demo: debug  # 设置您的包路径的日志级别为debug
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   charset:
     console: UTF-8
     file: UTF-8    

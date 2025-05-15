@@ -70,5 +70,20 @@ public class FileIoUtil {
             e.printStackTrace();
         }
     }
+    /**
+     * 文件读取，输出每行内容
+     */
+    public static void readFileByLine(String filePath) throws IOException {
+        try (
+            BufferedReader br = new BufferedReader(new FileReader(filePath));
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                log.info(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
 }
