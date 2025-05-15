@@ -9,7 +9,10 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
+/**
+ * 解压zip文件，解析xml，提取measInfoId的数据，组装成List<Map<measType, measValue>>
+ * @author
+ */
 public class ZipXmlExtractor {
     /**
      * 解压zip文件，解析xml，提取measInfoId="NE"的数据，组装成List<Map<measType, measValue>>
@@ -31,7 +34,12 @@ public class ZipXmlExtractor {
                     outFile.getParentFile().mkdirs();
                     try (InputStream is = zipFile.getInputStream(entry);
                          OutputStream os = new FileOutputStream(outFile)) {
-                        is.transferTo(os);
+                            is.transferTo(os);
+                        // byte[] buffer = new byte[8192];
+                        // int len;
+                        // while ((len = is.read(buffer)) != -1) {
+                        //     os.write(buffer, 0, len);
+                        // }
                     }
                     break;
                 }
@@ -94,7 +102,11 @@ public class ZipXmlExtractor {
                     outFile.getParentFile().mkdirs();
                     try (InputStream is = zipFile.getInputStream(entry);
                          OutputStream os = new FileOutputStream(outFile)) {
-                        is.transferTo(os);
+                        byte[] buffer = new byte[8192];
+                        int len;
+                        while ((len = is.read(buffer)) != -1) {
+                            os.write(buffer, 0, len);
+                        }
                     }
                     break;
                 }

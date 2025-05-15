@@ -1,0 +1,11 @@
+-- 创建用户 demo_user，设置密码为 your_password
+CREATE USER 'test'@'%' IDENTIFIED BY '528492';
+
+-- 授权 demo_user 对 demo 库拥有读写权限（增删改查）
+GRANT SELECT, INSERT, UPDATE, DELETE ON demo.* TO 'test'@'%';
+
+-- 刷新权限（可选）
+FLUSH PRIVILEGES;
+
+SELECT user, host FROM mysql.user;
+SHOW GRANTS FOR 'test'@'%';

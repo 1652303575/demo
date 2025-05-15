@@ -1,27 +1,28 @@
 server:
   port: 9091
 spring:
+  profiles:
+    active: dev
   application:
     name: demo
-  # config:
-  #   import: nacos:demo.yml
+#  config:
+#    import: nacos:demo.yml
   cloud:
     nacos:
       discovery:
-        server-addr: 192.168.0.101:8848
+        server-addr: 172.19.46.246:8848
         username: nacos
         password: 528492
         enabled: false
       config:
-        server-addr: 192.168.0.101:8848
+        server-addr: 172.19.46.246:8848
         cluster-name: DEFAULT_GROUP
         username: nacos
         password: 528492
         file-extension: yml
         enabled: false
   datasource:
-    platform: mysql
-    url: jdbc:mysql://192.168.0.101:3307/demo?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
+    url: jdbc:mysql://172.29.206.129:3307/demo?characterEncoding=utf8&connectTimeout=1000&socketTimeout=3000&autoReconnect=true
     username: root
     password: 528492
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -30,3 +31,7 @@ mybatis-plus:
   type-aliases-package: com.shiqi.demo.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8    

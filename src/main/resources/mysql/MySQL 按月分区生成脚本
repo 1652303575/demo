@@ -1,0 +1,12 @@
+from datetime import datetime, timedelta
+
+start_year = 2024
+end_year = 2025
+
+current = datetime(start_year, 1, 1)
+
+while current.year <= end_year:
+    next_month = current.replace(day=28) + timedelta(days=4)
+    next_month = next_month.replace(day=1)
+    print(f"    PARTITION p{current.strftime('%Y%m')} VALUES LESS THAN ('{next_month.strftime('%Y-%m-%d')}'),")
+    current = next_month
